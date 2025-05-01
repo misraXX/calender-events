@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>イベント詳細</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+    }
+    .event-meta {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .teams {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .team {
+      background: #fff;
+      border-left: 6px solid #0077cc;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .team h2 {
+      margin: 0 0 1rem 0;
+    }
+    .member {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .member-name {
+      font-weight: bold;
+      width: 120px;
+    }
+    .sns-icons a {
+      text-decoration: none;
+      margin-right: 0.5rem;
+      font-size: 1.4rem;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="event-title">イベント詳細</h1>
+  <div class="event-meta">
+    <p id="event-tweet"></p>
+    <p id="event-streams"></p>
+  </div>
+  <div class="teams" id="teams-container"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(location.search);
+    const eventId = urlParams.get("id");
+
+    fetch(`https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeBwnJ1toxKOg9_zS617cjClsiLHAtzWaah53/exec?id=250410`) // ←あなたのGAS URLに置き換えて
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("event-title").textContent = data.title || "イベント詳細";
+
+        // ツイートリンク
+        if (data.tweet) {
+          document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
+        }
+
+        // 配信リンク
+        let streamText = "";
+        if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
+        if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
+        document.getElementById("event-streams").innerHTML = streamText;
+
+        // チーム情報
+        const container = document.getElementById("teams-container");
+        data.teams.forEach(team => {
+          const div = document.createElement("div");
+          div.className = "team";
+          div.innerHTML = `<h2>${team.name}</h2>`;
+
+          team.members.forEach(member => {
+            const row = document.createElement("div");
+            row.className = "member";
+
+            const name = document.createElement("div");
+            name.className = "member-name";
+            name.textContent = member.name;
+            row.appendChild(name);
+
+            const sns = document.createElement("div");
+            sns.className = "sns-icons";
+            if (member.x) sns.innerHTML += `<a href="${member.x}" target="_blank">𝕏</a>`;
+            if (member.youtube) sns.innerHTML += `<a href="${member.youtube}" target="_blank">▶️</a>`;
+            if (member.twitch) sns.innerHTML += `<a href="${member.twitch}" target="_blank">🟣</a>`;
+
+            row.appendChild(sns);
+            div.appendChild(row);
+          });
+
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById("event-title").textContent = "取得に失敗しました";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>

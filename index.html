@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>配信イベントカレンダー</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>🎮 配信イベントカレンダー</h1>
+
+  <div id="view-switch">
+    <button onclick="showListView()">リスト表示</button>
+    <button onclick="showMonthView()">月表示</button>
+  </div>
+
+  <div id="list-view" style="display: block;">
+    <div id="events"></div>
+  </div>
+
+  <div id="month-view" style="display: none;">
+    <div id="calendar"></div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
