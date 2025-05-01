@@ -104,6 +104,8 @@ function renderEvents(events, container) {
 
       const link = document.createElement("a");
       link.href = `details.html?id=${event.id}`;
+      link.style.textDecoration = "none";
+      link.style.color = "inherit";
       link.appendChild(div);
       grid.appendChild(link);
     });
