@@ -17,23 +17,36 @@
       text-align: center;
       margin-bottom: 2rem;
     }
-    .teams {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
-    }
-    
-    .team {
-      flex: 1 1 45%; /* 画面幅の45%で折り返す */
-      max-width: 600px;
-      background: #fff;
-      border-left: 6px solid #0077cc;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-    }
+      .teams {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        padding: 1rem;
+      }
+      
+      .team {
+        flex: 1 1 calc(33.33% - 2rem); /* 3列想定 */
+        max-width: 360px;
+        background: #fff;
+        border-left: 6px solid #0077cc;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+      }
+      
+      @media (max-width: 900px) {
+        .team {
+          flex: 1 1 calc(50% - 2rem); /* 2列 */
+        }
+      }
+      
+      @media (max-width: 600px) {
+        .team {
+          flex: 1 1 100%; /* スマホでは1列 */
+        }
+      }
     .team h2 {
       margin: 0 0 1rem 0;
     }
