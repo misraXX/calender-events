@@ -96,18 +96,17 @@ function renderEvents(events, container) {
         ? `<span>他${event.participantImages.length - 3}名</span>` : '';
 
       div.innerHTML += `
-        <div class="event-title">${event.tournament || ""} / ${event.title || ""}</div>
+        <div class="event-title">
+          <a href="details.html?id=${event.id}" style="text-decoration: none; color: inherit;">
+            ${event.tournament || ""} / ${event.title || ""}
+          </a>
+        </div>
         <div class="event-meta">🕒 ${timeStr}</div>
         <div class="event-meta">${matchHtml}</div>
         <div class="event-meta">👥 ${imgs}${more}</div>
       `;
 
-      const link = document.createElement("a");
-      link.href = `details.html?id=${event.id}`;
-      link.style.textDecoration = "none";
-      link.style.color = "inherit";
-      link.appendChild(div);
-      grid.appendChild(link);
+      grid.appendChild(div);
     });
 
     groupDiv.appendChild(grid);
