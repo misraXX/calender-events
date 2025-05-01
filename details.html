@@ -130,11 +130,10 @@
 
           // アイコン
           const img = document.createElement("img");
-          img.src = member.icon || "";
+          img.src = member.icon || "https://via.placeholder.com/80x80?text=No+Image"; // ←ここで代替画像を指定
           img.alt = member.name;
           img.className = "member-icon";
           memberDiv.appendChild(img);
-
           // 名前
           const name = document.createElement("div");
           name.className = "member-name";
