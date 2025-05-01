@@ -57,59 +57,69 @@
   </div>
   <div class="teams" id="teams-container"></div>
 
-  <script>
-    const urlParams = new URLSearchParams(location.search);
-    const eventId = urlParams.get("id");
+<script>
+  const urlParams = new URLSearchParams(location.search);
+  const eventId = urlParams.get("id");
 
-    fetch(`https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeBwnJ1toxKOg9_zS617cjClsiLHAtzWaah53/exec?id=250410`) // ←あなたのGAS URLに置き換えて
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("event-title").textContent = data.title || "イベント詳細";
+  fetch(`https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeBwnJ1toxKOg9_zS617cjClsiLHAtzWaah53/exec?id=${eventId}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("event-title").textContent = data.title || "イベント詳細";
 
-        // ツイートリンク
-        if (data.tweet) {
-          document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
-        }
+      if (data.tweet) {
+        document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
+      }
 
-        // 配信リンク
-        let streamText = "";
-        if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
-        if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
-        document.getElementById("event-streams").innerHTML = streamText;
+      let streamText = "";
+      if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
+      if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
+      document.getElementById("event-streams").innerHTML = streamText;
 
-        // チーム情報
-        const container = document.getElementById("teams-container");
-        data.teams.forEach(team => {
-          const div = document.createElement("div");
-          div.className = "team";
-          div.innerHTML = `<h2>${team.name}</h2>`;
+      const container = document.getElementById("teams-container");
+      data.teams.forEach(team => {
+        const teamDiv = document.createElement("div");
+        teamDiv.className = "team";
+        teamDiv.innerHTML = `<h2>${team.name}</h2>`;
 
-          team.members.forEach(member => {
-            const row = document.createElement("div");
-            row.className = "member";
+        const memberList = document.createElement("div");
+        memberList.className = "member-list";
 
-            const name = document.createElement("div");
-            name.className = "member-name";
-            name.textContent = member.name;
-            row.appendChild(name);
+        team.members.forEach(member => {
+          const memberDiv = document.createElement("div");
+          memberDiv.className = "member-box";
 
-            const sns = document.createElement("div");
-            sns.className = "sns-icons";
-            if (member.x) sns.innerHTML += `<a href="${member.x}" target="_blank">𝕏</a>`;
-            if (member.youtube) sns.innerHTML += `<a href="${member.youtube}" target="_blank">▶️</a>`;
-            if (member.twitch) sns.innerHTML += `<a href="${member.twitch}" target="_blank">🟣</a>`;
+          // アイコン
+          const img = document.createElement("img");
+          img.src = member.icon || "";
+          img.alt = member.name;
+          img.className = "member-icon";
+          memberDiv.appendChild(img);
 
-            row.appendChild(sns);
-            div.appendChild(row);
-          });
+          // 名前
+          const name = document.createElement("div");
+          name.className = "member-name";
+          name.textContent = member.name;
+          memberDiv.appendChild(name);
 
-          container.appendChild(div);
+          // SNSアイコン
+          const sns = document.createElement("div");
+          sns.className = "sns-icons";
+          if (member.x) sns.innerHTML += `<a href="${member.x}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" class="sns-icon"></a>`;
+          if (member.twitch) sns.innerHTML += `<a href="${member.twitch}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" alt="Twitch" class="sns-icon"></a>`;
+          if (member.youtube) sns.innerHTML += `<a href="${member.youtube}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" class="sns-icon"></a>`;
+
+          memberDiv.appendChild(sns);
+          memberList.appendChild(memberDiv);
         });
-      })
-      .catch(err => {
-        document.getElementById("event-title").textContent = "取得に失敗しました";
-        console.error(err);
+
+        teamDiv.appendChild(memberList);
+        container.appendChild(teamDiv);
       });
-  </script>
+    })
+    .catch(err => {
+      document.getElementById("event-title").textContent = "取得に失敗しました";
+      console.error(err);
+    });
+</script>
 </body>
 </html>
