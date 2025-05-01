@@ -7,7 +7,6 @@
   <style>
     body {
       font-family: sans-serif;
-      margin: 2rem;
       background: #f5f5f5;
     }
     h1 {
@@ -20,53 +19,70 @@
     .teams {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
       justify-content: center;
+      gap: 1.5rem;
+      padding: 1rem;
     }
+
     .team {
       background: #fff;
       border-left: 6px solid #0077cc;
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      display: inline-block;
-      vertical-align: top;
+      box-sizing: border-box;
+      max-width: 100%;
     }
+
     .team h2 {
       margin: 0 0 1rem 0;
       text-align: center;
     }
-    .member {
+
+    .member-list {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 1rem;
-      margin-bottom: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
     }
-    .member img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .member-name {
-      font-weight: bold;
+
+    .member-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 120px;
     }
-    .sns-icons a {
-      text-decoration: none;
-      margin-right: 0.5rem;
-      font-size: 1.4rem;
+
+    .member-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
     }
-    .sns-icons a.youtube svg {
-      fill: #FF0000;
+
+    .member-name {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      text-align: center;
     }
-    .sns-icons a.twitch svg {
-      fill: #6441A5;
+
+    .sns-icons {
+      display: flex;
+      justify-content: center;
+      gap: 0.3rem;
     }
-    .sns-icons svg {
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
+
+    .sns-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    @media (max-width: 768px) {
+      .team {
+        width: 100% !important;
+      }
     }
   </style>
 </head>
@@ -78,91 +94,74 @@
   </div>
   <div class="teams" id="teams-container"></div>
 
-  <script>
-    const urlParams = new URLSearchParams(location.search);
-    const eventId = urlParams.get("id");
+<script>
+  const urlParams = new URLSearchParams(location.search);
+  const eventId = urlParams.get("id");
 
-    fetch(`https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeBwnJ1toxKOg9_zS617cjClsiLHAtzWaah53/exec?id=${eventId}`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("event-title").textContent = data.title || "イベント詳細";
+  fetch(`https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeBwnJ1toxKOg9_zS617cjClsiLHAtzWaah53/exec?id=${eventId}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("event-title").textContent = data.title || "イベント詳細";
 
-        // ツイートリンク
-        if (data.tweet) {
-          document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
-        }
+      if (data.tweet) {
+        document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
+      }
 
-        // 配信リンク
-        let streamText = "";
-        if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
-        if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
-        document.getElementById("event-streams").innerHTML = streamText;
+      let streamText = "";
+      if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
+      if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
+      document.getElementById("event-streams").innerHTML = streamText;
 
-        // チーム情報
-        const container = document.getElementById("teams-container");
-        data.teams.forEach(team => {
-          const div = document.createElement("div");
-          div.className = "team";
-          div.innerHTML = `<h2>${team.name}</h2>`;
+      const container = document.getElementById("teams-container");
+      data.teams.forEach(team => {
+        const teamDiv = document.createElement("div");
+        teamDiv.className = "team";
+        teamDiv.innerHTML = `<h2>${team.name}</h2>`;
 
-          team.members.forEach(member => {
-            const row = document.createElement("div");
-            row.className = "member";
+        const memberList = document.createElement("div");
+        memberList.className = "member-list";
 
-            const img = document.createElement("img");
-            img.src = member.icon || "https://via.placeholder.com/40?text=NO+IMG";
-            img.alt = member.name;
-            row.appendChild(img);
+        team.members.forEach(member => {
+          const memberDiv = document.createElement("div");
+          memberDiv.className = "member-box";
 
-            const name = document.createElement("div");
-            name.className = "member-name";
-            name.textContent = member.name;
-            row.appendChild(name);
+          const img = document.createElement("img");
+          img.src = member.icon || "https://lh6.googleusercontent.com/proxy/CNTIYcLDueUPOFa3q0HHITvuGbTBvsky-MfzskOEwpvdh_SwXqqAmdzlXxKQGOtah2o20DJUlrIiJpvbUHIqEoOMzo1-ol6W";
+          img.alt = member.name;
+          img.className = "member-icon";
+          memberDiv.appendChild(img);
 
-            const sns = document.createElement("div");
-            sns.className = "sns-icons";
-            if (member.x) {
-              const a = document.createElement("a");
-              a.href = member.x;
-              a.target = "_blank";
-              a.innerHTML = "𝕏";
-              sns.appendChild(a);
-            }
-            if (member.youtube) {
-              const a = document.createElement("a");
-              a.href = member.youtube;
-              a.target = "_blank";
-              a.className = "youtube";
-              a.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a2.99 2.99 0 0 0-2.104-2.115C19.64 3.5 12 3.5 12 3.5s-7.64 0-9.394.571a2.99 2.99 0 0 0-2.104 2.115C0 7.94 0 12 0 12s0 4.06.502 5.814a2.99 2.99 0 0 0 2.104 2.115C4.36 20.5 12 20.5 12 20.5s7.64 0 9.394-.571a2.99 2.99 0 0 0 2.104-2.115C24 16.06 24 12 24 12s0-4.06-.502-5.814zM9.75 15.5v-7l6 3.5-6 3.5z"/></svg>`;
-              sns.appendChild(a);
-            }
-            if (member.twitch) {
-              const a = document.createElement("a");
-              a.href = member.twitch;
-              a.target = "_blank";
-              a.className = "twitch";
-              a.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4.285 0L1.143 3.143v17.714h6v3.143l3.143-3.143h4.286L22.857 12V0H4.285zm16.572 11.143l-3.143 3.143h-4.286l-3.143 3.143v-3.143h-3.143V1.714h13.715v9.429zM16 6.857h-1.714v4.286H16V6.857zm-3.429 0h-1.714v4.286h1.714V6.857z"/></svg>`;
-              sns.appendChild(a);
-            }
+          const name = document.createElement("div");
+          name.className = "member-name";
+          name.textContent = member.name;
+          memberDiv.appendChild(name);
 
-            row.appendChild(sns);
-            div.appendChild(row);
-          });
+          const sns = document.createElement("div");
+          sns.className = "sns-icons";
+          if (member.x) sns.innerHTML += `<a href="${member.x}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" class="sns-icon"></a>`;
+          if (member.twitch) sns.innerHTML += `<a href="${member.twitch}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" alt="Twitch" class="sns-icon"></a>`;
+          if (member.youtube) sns.innerHTML += `<a href="${member.youtube}" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" class="sns-icon"></a>`;
 
-          // メンバー数に応じて幅を調整
-          const memberCount = team.members.length;
-          const memberWidth = 180; // 1人あたりの幅
-          const padding = 40; // タイトルや余白ぶん
-          const width = (memberCount * memberWidth) + padding;
-          div.style.width = width + 'px';
-
-          container.appendChild(div);
+          memberDiv.appendChild(sns);
+          memberList.appendChild(memberDiv);
         });
-      })
-      .catch(err => {
-        document.getElementById("event-title").textContent = "取得に失敗しました";
-        console.error(err);
+
+        teamDiv.appendChild(memberList);
+
+        // ✅ 横幅をメンバー数に応じて調整
+        const memberCount = team.members.length;
+        const baseWidth = 120;
+        const gap = 16; // margin-right相当
+        const totalWidth = memberCount * (baseWidth + gap) + 40; // padding分
+        teamDiv.style.width = `${Math.min(totalWidth, 1000)}px`;
+
+        container.appendChild(teamDiv);
       });
-  </script>
+    })
+    .catch(err => {
+      document.getElementById("event-title").textContent = "取得に失敗しました";
+      console.error(err);
+    });
+</script>
 </body>
 </html>
