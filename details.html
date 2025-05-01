@@ -19,15 +19,20 @@
     }
     .teams {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 2rem;
+      justify-content: center;
     }
+    
     .team {
+      flex: 1 1 45%; /* 画面幅の45%で折り返す */
+      max-width: 600px;
       background: #fff;
       border-left: 6px solid #0077cc;
       padding: 1rem;
       border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
     }
     .team h2 {
       margin: 0 0 1rem 0;
