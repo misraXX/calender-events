@@ -17,8 +17,6 @@ fetch("https://script.google.com/macros/s/AKfycbzb09LsiJ7OsVVMw8aDDU5JQWV9BTuOeB
     });
     filterEvents();
     renderCalendar(allEvents);
-    console.log("イベント数:", allEvents.length);
-  console.log("カレンダー描画開始");
   });
 
 function showListView() {
@@ -92,7 +90,7 @@ function renderEvents(events, container) {
         : event.time || "未定";
 
       const imgs = (event.participantImages || []).slice(0, 3).map(p =>
-        `<img src="${p}" style="height:32px; border-radius:4px; margin-right:4px;">`
+        `<img src="${p}" style="height:24px; border-radius:4px; margin-right:4px;">`
       ).join('');
       const more = (event.participantImages || []).length > 3
         ? `<span>他${event.participantImages.length - 3}名</span>` : '';
@@ -103,7 +101,11 @@ function renderEvents(events, container) {
         <div class="event-meta">${matchHtml}</div>
         <div class="event-meta">👥 ${imgs}${more}</div>
       `;
-      grid.appendChild(div);
+
+      const link = document.createElement("a");
+      link.href = `details.html?id=${event.id}`;
+      link.appendChild(div);
+      grid.appendChild(link);
     });
 
     groupDiv.appendChild(grid);
@@ -112,7 +114,6 @@ function renderEvents(events, container) {
 }
 
 function renderCalendar(events) {
-  console.log("renderCalendar呼び出し: ", events.length);
   const calendarEl = document.getElementById("calendar");
   const now = new Date();
   const year = now.getFullYear();
@@ -150,40 +151,31 @@ function renderCalendar(events) {
             <span>vs</span>
             <img src="${event.teamLogo2}" alt="team2" style="height:20px;">
           </div>` : `<div>${event.match || ""}</div>`;
-      
+
         const gameLogo = event.gameLogo
           ? `<img src="${event.gameLogo}" alt="game" style="height:20px;">`
           : event.game || "";
-      
+
         const eventLogo = event.eventLogo
           ? `<img src="${event.eventLogo}" alt="event" style="height:20px;">`
           : event.tournament || "";
-      
+
         return `
-          <div class="event-mark" style="margin-top:4px; font-size:0.8rem;">
-            ${eventLogo} / ${event.title || ""}
-            <br>
-            ${matchHtml}
-            <br>
-            ${gameLogo}
-          </div>`;
+          <a href="details.html?id=${event.id}" style="text-decoration: none; color: inherit;">
+            <div class="event-mark">
+              ${eventLogo} / ${event.title || ""}
+              <br>
+              ${matchHtml}
+              <br>
+              ${gameLogo}
+            </div>
+          </a>`;
       }).join('');
     }
     html += `</td>`;
-
     if ((startDayOfWeek + d) % 7 === 0) html += `</tr><tr>`;
-    console.log("rendering calendar");
-
   }
 
   html += `</tr></tbody></table>`;
   calendarEl.innerHTML = html;
-
-  // document.querySelectorAll(".calendar-cell").forEach(cell => {
-  //   const date = cell.getAttribute("data-date");
-  //   const eventsForDate = allEvents.filter(e => e.date === date);
-  //   const container = document.getElementById("calendar");
-  //   container.innerHTML = '';
-  //   renderEvents(eventsForDate, container);
-  // });
 }
