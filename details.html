@@ -85,14 +85,15 @@
       }
     }
   </style>
+
 </head>
 <body>
-  <h1 id="event-title">イベント詳細</h1>
+  <h1 id="event-title"></h1>
   <div class="event-meta">
-    <p id="event-tweet"></p>
     <p id="event-streams"></p>
   </div>
   <div class="teams" id="teams-container"></div>
+  <div id="event-tweet" style="display: flex; justify-content: center;"></div>
 
 <script>
   const urlParams = new URLSearchParams(location.search);
@@ -102,15 +103,11 @@
     .then(res => res.json())
     .then(data => {
       document.getElementById("event-title").textContent = data.title || "イベント詳細";
-
-      if (data.tweet) {
-        document.getElementById("event-tweet").innerHTML = `📢 <a href="${data.tweet}" target="_blank">イベントツイート</a>`;
-      }
-
       let streamText = "";
       if (data.mainStream) streamText += `▶️ <a href="${data.mainStream}" target="_blank">本配信</a> `;
       if (data.subStream) streamText += `📺 <a href="${data.subStream}" target="_blank">サブ配信</a>`;
       document.getElementById("event-streams").innerHTML = streamText;
+      console.log(data);
 
       const container = document.getElementById("teams-container");
       data.teams.forEach(team => {
@@ -145,6 +142,16 @@
           memberDiv.appendChild(sns);
           memberList.appendChild(memberDiv);
         });
+        if (data.tweet) {
+        const tweetDiv = document.getElementById("event-tweet");
+        tweetDiv.innerHTML = `
+            <blockquote class="twitter-tweet">
+            <a href="${data.tweet}"></a>
+            </blockquote>
+        `;
+        twttr.widgets.load(tweetDiv);
+        console.log(data.tweet)
+        }
 
         teamDiv.appendChild(memberList);
 
@@ -163,5 +170,7 @@
       console.error(err);
     });
 </script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 </body>
 </html>
